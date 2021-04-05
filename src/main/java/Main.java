@@ -1,7 +1,13 @@
 public class Main {
-    public static void main(String[] args){
-        SyncQueue q = new SyncQueue();
-        new Producer(q,1000);
-        new Consumer(q);
+    static void startPattern(int n) {
+        for (int i = 0; i < n; i++) {
+            SyncQueue q = new SyncQueue();
+            new Producer(q, 1000);
+            new Consumer(q);
+        }
+    }
+
+    public static void main(String[] args) {
+        startPattern(2);
     }
 }

@@ -3,12 +3,12 @@ public class Consumer implements Runnable {
 
     public Consumer(SyncQueue queue) {
         this.queue = queue;
-        new Thread(this,this.getClass().getName()).start();
+        new Thread(this, this.getClass().getName()).start();
     }
 
     @Override
     public void run() {
-        while(true){
+        while (true) {
             try {
                 queue.get();
             } catch (InterruptedException e) {
