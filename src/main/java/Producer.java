@@ -10,17 +10,18 @@ public class Producer implements Runnable {
 
     @Override
     public void run() {
-        int i = 0;
+        send();
+    }
+    synchronized void send(){
         while (true) {
             try {
                 int res = getRandomNumber(10, 50);
                 queue.put(res);
-                Thread.sleep(millis);
+                wait(millis);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
     }
 
     public int getRandomNumber(int min, int max) {
