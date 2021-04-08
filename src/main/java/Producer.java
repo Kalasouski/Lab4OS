@@ -1,23 +1,39 @@
-public class Producer implements Runnable {
-    final SyncQueue queue;
-    final int millis;
+import java.util.Queue;
 
-    public Producer(SyncQueue queue, int millis) {
+public class Producer extends Thread {
+    private final Queue<Integer> queue;
+    private final int maxSize;
+    private final int minValue, maxValue;
+    private final int millis;
+    public Producer(Queue<Integer> queue, int maxSize, int minValue, int maxValue, int millis) {
         this.queue = queue;
+        this.maxSize = maxSize;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
         this.millis = millis;
-        new Thread(this, this.getClass().getName()).start();
     }
 
     @Override
     public void run() {
-        send();
-    }
-    synchronized void send(){
-        while (true) {
+        while(!Thread.currentThread().isInterrupted()){
+            synchronized (queue){
+                while (queue.size() == maxSize) {
+                    try {
+                        System.out .println("Queue is full, "
+                                + "Producer thread waiting for "
+                                + "consumer to take something from queue");
+                        queue.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                int generatedVal = getRandomNumber(minValue,maxValue);
+                System.out.println("Producing value : " + generatedVal);
+                queue.add(generatedVal);
+                queue.notifyAll();
+            }
             try {
-                int res = getRandomNumber(10, 50);
-                queue.put(res);
-                wait(millis);
+                Thread.sleep(millis);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
